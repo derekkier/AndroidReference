@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     public Toast toast;
+    public int intResumeCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +18,8 @@ public class MainActivity extends Activity {
 
         //create and show a toast message.
         Context context = getApplicationContext();
-        CharSequence text = "Hello Amily! Wo ai ni!";
         int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, text, duration);
+        toast = Toast.makeText(context, R.string.onCreate_message, duration);
         toast.show();
     }
 
@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
     protected void onPause()
     {
         super.onPause();
-        toast.setText("Don't leave please!");
+        toast.setText(R.string.onPause_message);
         toast.show();
     }
 
@@ -35,8 +35,11 @@ public class MainActivity extends Activity {
     protected void onResume()
     {
         super.onResume();
-        toast.setText("That's better! Wo ai ni!");
-        toast.show();
+        if( intResumeCount > 0 ) {
+            toast.setText(R.string.onResume_message);
+            toast.show();
+        }
+        intResumeCount++;
     }
 
     @Override
