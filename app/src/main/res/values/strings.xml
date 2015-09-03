@@ -11,7 +11,7 @@
     <string name="final_bill_text_view">Final Bill</string>
     <string name="final_bill_edit_text">.15</string>
 
-    <string name="change_tip_text_view">.15</string>
+    <string name="change_tip_text_view">Change Tip</string>
 
     <string name="onCreate_message">Hello there.</string>
     <string name="onPause_message">See you later!</string>

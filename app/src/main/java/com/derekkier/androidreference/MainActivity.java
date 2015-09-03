@@ -8,10 +8,10 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.SeekBar;
 
 public class MainActivity extends Activity {
-    private static final String TOTAL_BILL = "TOTAL BILL";
+    private static final String TOTAL_BILL = "TOTAL_BILL";//the value acts a key to be stored later
     private static final String CURRENT_TIP = "CURRENT_TIP";
     private static final String BILL_WITHOUT_TIP = "BILL_WITHOUT_TIP";
 
@@ -22,10 +22,7 @@ public class MainActivity extends Activity {
     EditText billBeforeTipET;
     EditText tipAmountET;
     EditText finalBillET;
-
-
-    public Toast toast;
-    public int intResumeCount = 0;
+    SeekBar tipSeekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +45,30 @@ public class MainActivity extends Activity {
         billBeforeTipET = (EditText) findViewById(R.id.billEditText);
         tipAmountET = (EditText) findViewById(R.id.tipEditText);
         finalBillET = (EditText) findViewById(R.id.finalBillEditText);
-
+        tipSeekBar = (SeekBar) findViewById(R.id.changeTipSeekBar);
+        tipSeekBar.setOnSeekBarChangeListener(tipSeekBarListener);
         billBeforeTipET.addTextChangedListener(billBeforeTipListener);
         //tipAmountET.addTextChangedListener(billBeforeTipListener);
-
-        //create and show a toast message.
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, R.string.onCreate_message, duration);
-        toast.show();
     }
+    private SeekBar.OnSeekBarChangeListener tipSeekBarListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            tipAmount       = tipSeekBar.getProgress() *.01;
+            tipAmountET.setText(String.format("%.02f",tipAmount));
+
+            updateTipAndFinalBill();
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
 
     private TextWatcher billBeforeTipListener = new TextWatcher() {
         @Override
@@ -94,22 +105,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onPause()
+    protected void onSaveInstanceState(Bundle outState)
     {
-        super.onPause();
-        toast.setText(R.string.onPause_message);
-        toast.show();
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        if( intResumeCount > 0 ) {
-            toast.setText(R.string.onResume_message);
-            toast.show();
-        }
-        intResumeCount++;
+        super.onSaveInstanceState(outState);
+        outState.putDouble(TOTAL_BILL, finalBill);
+        outState.putDouble(CURRENT_TIP, tipAmount);
+        outState.putDouble(BILL_WITHOUT_TIP, billBeforeTip);
     }
 
     @Override
