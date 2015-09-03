@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -14,13 +16,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        //create and show a toast message.
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, R.string.onCreate_message, duration);
-        toast.show();
+        WebView webview = new WebView(this);
+        WebSettings webSettings = webview.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        setContentView(webview);
+        webview.loadUrl("http://globalapp.zuppler.com/show.html?channel=skinnyfats&permalink=skinnyfats2");
     }
 
     @Override
