@@ -16,10 +16,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WebView webview = new WebView(this);
+        setContentView(R.layout.activity_main);
+        //RelativeLayout RL = (RelativeLayout)findViewById(R.id.RL);
+        //WebView webview = new WebView(this);
+        WebView webview = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = webview.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        setContentView(webview);
+        //setContentView(webview);
         webview.loadUrl("http://globalapp.zuppler.com/show.html?channel=skinnyfats&permalink=skinnyfats2");
     }
 
