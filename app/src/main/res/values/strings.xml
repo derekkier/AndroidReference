@@ -1,6 +1,6 @@
 <resources>
     <string name="action_settings">Settings</string>
-    <string name="app_name">AndroidReference</string>
+    <string name="app_name">Android ListViews</string>
     <string name="hello_world">Hello world!</string>
     <string name="onCreate_message">Hello there.</string>
     <string name="onPause_message">See you later!</string>

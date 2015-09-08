@@ -6,9 +6,11 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -20,27 +22,32 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //RelativeLayout RL = (RelativeLayout)findViewById(R.id.RL);
-        //WebView webview = new WebView(this);
-        WebView webview = (WebView) findViewById(R.id.webview);
-        WebSettings webSettings = webview.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webview.setWebViewClient(new  WebViewClient(){
+
+        // Simple array with a list TV shows
+        String[] favoriteTVShows = {"Walking Dead","Orange Is The New Black","Sherlock Holmes","Lie To Me"};
+
+        // The ListAdapter acts as a bridge between the data and each ListItem
+        // You fill the ListView with a ListAdapter. You pass it a context represented by
+        // this. A Context provides access to resources you need.
+        // android.R.layout.simple_list_item_1 is one of the resources needed.
+        // It is a predefined layout provided by Android that stands in as a default
+        ListAdapter theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, favoriteTVShows);
+
+        // ListViews display data in a scrollable list
+        ListView theListView = (ListView) findViewById(R.id.theListView);
+        theListView.setAdapter(theAdapter);
+
+        theListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                //super.onPageFinished(view, url);
-                view.loadUrl("javascript:(function(){ if( window.intervalSpecialInstructions === undefined ) { console.log('intervalSpecialInstructions is undefined'); var strTable = 'Table9'; var elementSpecialInstructions = document.getElementById('special_instructions'); var specialInstructionsText; var regExpForTable = new RegExp('^'+strTable, 'gi');	window.intervalSpecialInstructions = setInterval( function() { elementSpecialInstructions = document.getElementById('special_instructions'); console.log( typeof(elementSpecialInstructions ) ); console.log( elementSpecialInstructions  ); 	if( typeof( elementSpecialInstructions ) == 'object' &&  elementSpecialInstructions === null ) { console.log('elementSpecialInstructions does not exist yet.');		} else { specialInstructionsText = elementSpecialInstructions.value; if( specialInstructionsText.match(regExpForTable) ===null) { elementSpecialInstructions.value=strTable+' '+specialInstructionsText; } console.log('elementSpecialInstructions exists');		} } , 2000); } })()");
-                //view.loadUrl("javascript:(function(){var val='default'; if( window.intervalSpecialInstructions === undefined ){val='intervalSpecialInstructions =undefined';} document.getElementsByTagName('body')[0].innerHTML=val;})()");
-               //Log.d("onPageFinished", "The Page has finished loading");
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                String tvShowPicked = "You selected " +
+                        String.valueOf(adapterView.getItemAtPosition(i));
+
+                Toast.makeText(MainActivity.this, tvShowPicked, Toast.LENGTH_SHORT).show();
 
             }
         });
-        if (savedInstanceState != null)
-            webview.restoreState(savedInstanceState);
-        else
-            webview.loadUrl("http://globalapp.zuppler.com/show.html?channel=skinnyfats&permalink=skinnyfats2");
-        //setContentView(webview);
-        //webview.loadUrl("http://globalapp.zuppler.com/show.html?channel=skinnyfats&permalink=skinnyfats2");
     }
 
     @Override
