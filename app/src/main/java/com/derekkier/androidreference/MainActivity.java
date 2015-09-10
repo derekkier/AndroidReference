@@ -3,6 +3,7 @@ package com.derekkier.androidreference;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -31,7 +33,9 @@ public class MainActivity extends Activity {
         // this. A Context provides access to resources you need.
         // android.R.layout.simple_list_item_1 is one of the resources needed.
         // It is a predefined layout provided by Android that stands in as a default
-        ListAdapter theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, favoriteTVShows);
+        ListAdapter theAdapter = new MyAdapter(this,favoriteTVShows);
+
+        //new ArrayAdapter<String>(this, R.layout.row_layout,R.id.textView1, favoriteTVShows);
 
         // ListViews display data in a scrollable list
         ListView theListView = (ListView) findViewById(R.id.theListView);
@@ -43,6 +47,9 @@ public class MainActivity extends Activity {
 
                 String tvShowPicked = "You selected " +
                         String.valueOf(adapterView.getItemAtPosition(i));
+                        //TextView currentTextView = (TextView) adapterView.getItemAtPosition(i);
+                        //adapterView.findViewById(R.id.textView1);
+                        //currentTextView.setTextColor(Color.parseColor("#000000"));
 
                 Toast.makeText(MainActivity.this, tvShowPicked, Toast.LENGTH_SHORT).show();
 
