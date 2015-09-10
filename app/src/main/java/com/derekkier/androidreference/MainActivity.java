@@ -2,6 +2,9 @@ package com.derekkier.androidreference;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,18 +13,52 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     public Toast toast;
     public int intResumeCount = 0;
+    int increment = 4;
+    MyLocation myLocation = new MyLocation();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    // private ProgressDialog dialog;
+
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        myLocation.getLocation(getApplicationContext(), locationResult);
 
-        //create and show a toast message.
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, R.string.onCreate_message, duration);
-        toast.show();
+        boolean r = myLocation.getLocation(getApplicationContext(),
+            locationResult);
+
+        /*
+        startActivity(new Intent(LocationFinder.this,
+        // Nearbyhotelfinder.class));
+            GPSMyListView.class));
+        finish();
+        */
     }
+
+    public MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
+
+        @Override
+        public void gotLocation(Location location) {
+            // TODO Auto-generated method stub
+            double Longitude = location.getLongitude();
+            double Latitude = location.getLatitude();
+            DistanceUsingLatitudeLongitude distLatLong =  new DistanceUsingLatitudeLongitude();
+            double distanceFromSkinnyFats1 = distLatLong.getDistance(Longitude,Latitude,36.075947,-115.181811,'M');
+            //8680 W Warm Springs Rd, Las Vegas, NV 89148 Lat and long = 36.056123, -115.281297
+            //meters/1609.344 converts to miles
+/*
+            Toast.makeText(getApplicationContext(), "Got Location",
+                Toast.LENGTH_LONG).show();
+*/
+            Toast.makeText(getApplicationContext(), "Longitude = " + Longitude+", Latitude = " + Latitude, Toast.LENGTH_LONG).show();
+            try {
+                Toast.makeText(getApplicationContext(), "Distance to Dean Martin = "+distanceFromSkinnyFats1+" miles", Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                //Toast.makeText(getApplicationContext(), "Exception", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     protected void onPause()
