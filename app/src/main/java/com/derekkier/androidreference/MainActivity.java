@@ -1,6 +1,7 @@
 package com.derekkier.androidreference;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
@@ -58,7 +59,14 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            DialogFragment myFragment = new MyDialogFragment();
+            myFragment.show(getFragmentManager(),"theDialog");
             return true;
+        }
+        else if(id == R.id.exit_the_app)
+        {
+           finish();
+           return true;
         }
 
         return super.onOptionsItemSelected(item);
