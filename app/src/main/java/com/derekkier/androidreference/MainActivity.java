@@ -2,9 +2,12 @@ package com.derekkier.androidreference;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -62,5 +65,23 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onGetNameClick(View view) {
+        Intent getNameScreenIntent = new Intent(this,
+                SecondScreen.class);
+
+        final int result = 1;
+        getNameScreenIntent.putExtra("callingActivity","MainActivity");
+        startActivityForResult(getNameScreenIntent, result);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        TextView usersNameMessage = (TextView) findViewById(R.id.users_name_message);
+        String nameSentBack = data.getStringExtra("UsersName");
+        usersNameMessage.append(" "+nameSentBack);
     }
 }
