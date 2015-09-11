@@ -1,15 +1,24 @@
 package com.derekkier.androidreference;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
+    private static final int REQUEST_ENABLE_BT = 1;
+    private Boolean userWantsBluetoothOff = false;
+    TextView stateBluetooth;
+    BluetoothAdapter bluetoothAdapter;
+
     public Toast toast;
     public int intResumeCount = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +30,10 @@ public class MainActivity extends Activity {
         int duration = Toast.LENGTH_SHORT;
         toast = Toast.makeText(context, R.string.onCreate_message, duration);
         toast.show();
+        stateBluetooth = (TextView)findViewById(R.id.bluetoothstate);
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        CheckBlueToothState();
     }
 
     @Override
@@ -40,6 +53,48 @@ public class MainActivity extends Activity {
             toast.show();
         }
         intResumeCount++;
+
+        if( !userWantsBluetoothOff )
+        {
+            CheckBlueToothState();
+        }
+        //BluetoothAdapter.STATE_ON
+        //Toast.makeText(MainActivity.this,"is bluetooth state on?"+REQUEST_ENABLE_BT,Toast.LENGTH_LONG ).show();
+    }
+
+    private void CheckBlueToothState(){
+    if (bluetoothAdapter == null){
+        stateBluetooth.setText("Bluetooth NOT support");
+       }else{
+        if (bluetoothAdapter.isEnabled()){
+         if(bluetoothAdapter.isDiscovering()){
+          stateBluetooth.setText("Bluetooth is currently in device discovery process.");
+         }else{
+          stateBluetooth.setText("Bluetooth is Enabled.");
+         }
+        }else{
+         stateBluetooth.setText("Bluetooth is NOT Enabled!");
+         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+       }
+   }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        Toast.makeText(MainActivity.this, "requestCode" + requestCode, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "resultCode" + resultCode, Toast.LENGTH_SHORT).show();
+        if(requestCode == REQUEST_ENABLE_BT ){
+            if( resultCode ==0 ) {
+                userWantsBluetoothOff = true;
+                Toast.makeText(MainActivity.this, "Wants it off" + resultCode, Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                CheckBlueToothState();
+            }
+        }
     }
 
     @Override
