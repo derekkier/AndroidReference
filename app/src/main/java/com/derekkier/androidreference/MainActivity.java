@@ -2,47 +2,45 @@ package com.derekkier.androidreference;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
     public Toast toast;
     public int intResumeCount = 0;
-    //private WebView webview;
+    private WebView webview;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final Context context = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //RelativeLayout RL = (RelativeLayout)findViewById(R.id.RL);
-        //WebView webview = new WebView(this);
-        WebView webview = (WebView) findViewById(R.id.webview);
-        WebSettings webSettings = webview.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webview.setWebViewClient(new  WebViewClient(){
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                //super.onPageFinished(view, url);
-                view.loadUrl("javascript:(function(){ if( window.intervalSpecialInstructions === undefined ) { console.log('intervalSpecialInstructions is undefined'); var strTable = 'Table9'; var elementSpecialInstructions = document.getElementById('special_instructions'); var specialInstructionsText; var regExpForTable = new RegExp('^'+strTable, 'gi');	window.intervalSpecialInstructions = setInterval( function() { elementSpecialInstructions = document.getElementById('special_instructions'); console.log( typeof(elementSpecialInstructions ) ); console.log( elementSpecialInstructions  ); 	if( typeof( elementSpecialInstructions ) == 'object' &&  elementSpecialInstructions === null ) { console.log('elementSpecialInstructions does not exist yet.');		} else { specialInstructionsText = elementSpecialInstructions.value; if( specialInstructionsText.match(regExpForTable) ===null) { elementSpecialInstructions.value=strTable+' '+specialInstructionsText; } console.log('elementSpecialInstructions exists');		} } , 2000); } })()");
-                //view.loadUrl("javascript:(function(){var val='default'; if( window.intervalSpecialInstructions === undefined ){val='intervalSpecialInstructions =undefined';} document.getElementsByTagName('body')[0].innerHTML=val;})()");
-               //Log.d("onPageFinished", "The Page has finished loading");
 
+        button = (Button)findViewById(R.id.buttonUrl);
+
+        button.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                Intent intent = new Intent(context, ActivityWeb.class);
+                startActivity(intent);
             }
         });
-        if (savedInstanceState != null)
-            webview.restoreState(savedInstanceState);
-        else
-            webview.loadUrl("http://globalapp.zuppler.com/show.html?channel=skinnyfats&permalink=skinnyfats2");
-        //setContentView(webview);
-        //webview.loadUrl("http://globalapp.zuppler.com/show.html?channel=skinnyfats&permalink=skinnyfats2");
     }
 
+    /*
     @Override
     protected void onPause()
     {
@@ -61,7 +59,6 @@ public class MainActivity extends Activity {
         }
         intResumeCount++;
     }
-    /*
     @Override
     public void onConfigurationChanged(Configuration newConfig)
     {

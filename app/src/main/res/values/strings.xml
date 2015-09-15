@@ -5,4 +5,5 @@
     <string name="onCreate_message">Hello there.</string>
     <string name="onPause_message">See you later!</string>
     <string name="onResume_message">Welcome back!</string>
+    <string name="title_activity_activity_web">ActivityWeb</string>
 </resources>
