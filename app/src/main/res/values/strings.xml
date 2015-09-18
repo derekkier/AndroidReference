@@ -5,4 +5,9 @@
     <string name="onCreate_message">Hello there.</string>
     <string name="onPause_message">See you later!</string>
     <string name="onResume_message">Welcome back!</string>
+    <string name="btn_show_notification">Show Notification</string>
+    <string name="btn_stop_notification">Stop Notification</string>
+    <string name="btn_alert_in_seconds">Alert In Seconds</string>
+    <string name="title_activity_more_info_notification">MoreInfoNotification</string>
+    <string name="tvMoreInfo">More Info Text</string>
 </resources>

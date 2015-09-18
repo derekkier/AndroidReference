@@ -1,45 +1,86 @@
 package com.derekkier.androidreference;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+import android.support.v4.app.NotificationCompat;
+
+import java.util.GregorianCalendar;
 
 public class MainActivity extends Activity {
-    public Toast toast;
-    public int intResumeCount = 0;
+    Button btnShowNotification, btnStopNotification, btnSetAlarm;
+
+    NotificationManager notificationManager;
+
+    boolean isNotificationActive = false;
+    int notificationID = 33;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //create and show a toast message.
-        Context context = getApplicationContext();
-        int duration = Toast.LENGTH_SHORT;
-        toast = Toast.makeText(context, R.string.onCreate_message, duration);
-        toast.show();
+        btnShowNotification     = (Button) findViewById(R.id.btnShowNotification);
+        btnStopNotification     = (Button) findViewById(R.id.btnStopNotification);
+        btnSetAlarm             = (Button) findViewById(R.id.btnSetAlarm);
+
     }
 
-    @Override
-    protected void onPause()
+    public void showNotification(View view)
     {
-        super.onPause();
-        toast.setText(R.string.onPause_message);
-        toast.show();
+        NotificationCompat.Builder notificationBuilder = new
+                NotificationCompat.Builder(this)
+                .setContentTitle("Content Title")
+                .setContentText("Content Text")
+                .setTicker("Ticker Text")
+                .setSmallIcon(R.drawable.asterisk_orange);
+
+        Intent moreInfoIntent = new Intent(this, MoreInfoNotification.class);
+
+        //for use when person goes back or back button
+        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
+        taskStackBuilder.addParentStack(MoreInfoNotification.class);
+        taskStackBuilder.addNextIntent(moreInfoIntent);
+
+        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notificationBuilder.setContentIntent(pendingIntent);
+
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(notificationID, notificationBuilder.build());
+        isNotificationActive=true;
     }
 
-    @Override
-    protected void onResume()
+    public void stopNotification(View view)
     {
-        super.onResume();
-        if( intResumeCount > 0 ) {
-            toast.setText(R.string.onResume_message);
-            toast.show();
+        if( isNotificationActive )
+        {
+            notificationManager.cancel(notificationID);
+
         }
-        intResumeCount++;
+    }
+
+    public void setAlarm(View view)
+    {
+        Long alertTime = new GregorianCalendar().getTimeInMillis()+5*1000;
+
+        Intent alarmIntent = new Intent(this, AlertReceiver.class);
+
+        AlarmManager alarmManager = (AlarmManager)
+                getSystemService( Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
+                PendingIntent.getBroadcast(this, 1, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+
     }
 
     @Override
