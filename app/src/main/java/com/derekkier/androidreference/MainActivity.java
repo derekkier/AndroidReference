@@ -1,87 +1,122 @@
 package com.derekkier.androidreference;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.FileObserver;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
-import android.support.v4.app.NotificationCompat;
 
-import java.util.GregorianCalendar;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
 
 public class MainActivity extends Activity {
-    Button btnShowNotification, btnStopNotification, btnSetAlarm;
-
-    NotificationManager notificationManager;
-
-    boolean isNotificationActive = false;
-    int notificationID = 33;
+    private Context context = MainActivity.this;
+    //private String strTable;
+    private FileObserver fileObserver;//I couldn't get FileObserver to work properly as a listenter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnShowNotification     = (Button) findViewById(R.id.btnShowNotification);
-        btnStopNotification     = (Button) findViewById(R.id.btnStopNotification);
-        btnSetAlarm             = (Button) findViewById(R.id.btnSetAlarm);
+        String fileName = "myFile3";
+        //makeText(str + "|is contents of "+fileName);
 
+
+        File path = context.getFilesDir();
+        File file = new File( path, fileName );
+        makeText(file.getPath());
+        /*
+        fileObserver = new FileObserver(path.toString(),FileObserver.ALL_EVENTS) {
+            @Override
+            public void onEvent(int event, String path) {
+                makeText("path "+path+" changed "+event);
+            }
+        };
+
+        fileObserver.startWatching();
+        */
+
+
+        writeFile(fileName, "new contents");
+        String str = readFileAsString(fileName);
+
+        readFileAsString(fileName);
     }
 
-    public void showNotification(View view)
-    {
-        NotificationCompat.Builder notificationBuilder = new
-                NotificationCompat.Builder(this)
-                .setContentTitle("Content Title")
-                .setContentText("Content Text")
-                .setTicker("Ticker Text")
-                .setSmallIcon(R.drawable.asterisk_orange);
+    public String readFileAsString(String fileName) {
+        //Context context = App.instance.getApplicationContext();
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new FileReader(new File(context.getFilesDir(), fileName)));
+            while ((line = in.readLine()) != null) stringBuilder.append(line);
 
-        Intent moreInfoIntent = new Intent(this, MoreInfoNotification.class);
+        } catch (FileNotFoundException e) {
+            //Logger.logError(TAG, e);
+            makeText("file doesn't exist");
+        } catch (IOException e) {
+            //Logger.logError(TAG, e);
+        }
 
-        //for use when person goes back or back button
-        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
-        taskStackBuilder.addParentStack(MoreInfoNotification.class);
-        taskStackBuilder.addNextIntent(moreInfoIntent);
-
-        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        notificationBuilder.setContentIntent(pendingIntent);
-
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationID, notificationBuilder.build());
-        isNotificationActive=true;
+        makeText("Reading file contents:" + stringBuilder.toString());
+        return stringBuilder.toString();
     }
 
-    public void stopNotification(View view)
+    private void writeFile(String fileName,String contents)
     {
-        if( isNotificationActive )
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput(fileName, Context.MODE_PRIVATE));
+            outputStreamWriter.write(contents);
+            outputStreamWriter.close();
+            //makeText("Created file");
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+            makeText("File write failed: " + e.toString());
+        }
+
+        //isFileInExistence(fileName);
+    }
+
+    private boolean isFileInExistence(String fileName)
+    {
+        File path = context.getFilesDir();
+        File file = new File( path, fileName );
+        makeText("path:" + path);
+        if(file.exists())
         {
-            notificationManager.cancel(notificationID);
-
+            makeText("myFile exists.");
+            return true;
+        }
+        else
+        {
+            makeText("myFile does not exist.");
+            return false;
         }
     }
 
-    public void setAlarm(View view)
+    public void updateFileContents(View view)
     {
-        Long alertTime = new GregorianCalendar().getTimeInMillis()+5*1000;
-
-        Intent alarmIntent = new Intent(this, AlertReceiver.class);
-
-        AlarmManager alarmManager = (AlarmManager)
-                getSystemService( Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, alertTime,
-                PendingIntent.getBroadcast(this, 1, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT));
-
+        EditText etFileContents = (EditText) findViewById(R.id.etFileContents);
+        EditText etFileName = (EditText) findViewById(R.id.etFileName);
+        String fileContents = etFileContents.getText().toString();
+        String fileName = etFileName.getText().toString();
+        writeFile(fileName, fileContents);
+        //makeText("updateFile|" + etFileContents.getText().toString() + " fname" + etFileName.getText().toString());
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,5 +138,10 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void makeText(String str)
+    {
+        Toast.makeText(MainActivity.this,str,Toast.LENGTH_LONG).show();
     }
 }
