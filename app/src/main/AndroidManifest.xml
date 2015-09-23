@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.derekkier.androidreference" >
 
+    <!-- GlobalState needs to be in the app name when it is used to create tha Android equivalent to Session vars -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:name="com.derekkier.androidreference.GlobalState"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"

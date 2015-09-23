@@ -7,4 +7,8 @@
     <string name="onResume_message">Welcome back!</string>
     <string name="screen_two_text">Screen Two</string>
     <string name="get_activity_screen_two_text">Get Activity Screen Two</string>
+    <string name="tvGetTableLocation">Get Table Location</string>
+    <string name="btBackToMainActivity">Back To Main Activity</string>
+    <string name="btUpdateTableName">Update Table Name</string>
+    <string name="etTableName">Write table name</string>
 </resources>

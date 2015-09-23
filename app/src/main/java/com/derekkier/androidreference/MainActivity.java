@@ -1,7 +1,6 @@
 package com.derekkier.androidreference;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,19 +9,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.view.View.OnClickListener;
 
-import java.io.Serializable;
-
 public class MainActivity extends Activity {
     public int intResumeCount = 0;
     SharedObject mySharedObj = new SharedObject();
+    GlobalState gs;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gs = (GlobalState) getApplication();
+        //gs.setTableSelected( "Table21" );
+
         setContentView(R.layout.activity_main);
         mySharedObj.setSelectedSeat(5);
         Toast.makeText(MainActivity.this, mySharedObj.getSelectedSeat(), Toast.LENGTH_LONG).show();
@@ -103,4 +107,12 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    public void setTableName(View view) {
+        EditText etTableName = (EditText) findViewById(R.id.etTableName);
+
+        gs.setTableSelected(etTableName.getText().toString());
+    }
+
 }
