@@ -26,11 +26,12 @@ import android.app.Activity;
 
 public class MainActivity extends Activity {
     String locations;
+    String estimotes;
     private static Context context;
     TextView tvLocations;
 
     static String urlJsonLocations = "http://estimotemanager.derekkier.com/locations?format=json";
-    static String urlJsonEstimotes;// = "http://estimotemanager.derekkier.com/estimotes?format=json";
+    static String urlJsonEstimotes = "http://estimotemanager.derekkier.com/estimotes?format=json";
     //static String urlJsonLocations = "http://estimotemanager.derekkier.com/locations?format=json";
     EditText etResponse;
     TextView tvIsConnected;
@@ -38,7 +39,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         context =this;
 
         // get reference to the views
@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
         }
 
         // call AsynTask to perform network operation on separate thread
-        new HttpAsyncTask().execute(urlJsonLocations);
+        new HttpAsyncTask().execute(urlJsonEstimotes);
     }
 
     public  String GET(String url){
@@ -99,16 +99,17 @@ public class MainActivity extends Activity {
 
             jsonArray               = new JSONArray(result);
             JSONObject jsonDataRow  = jsonArray.getJSONObject(0);
-            String location_name    = jsonDataRow.getString("name");
 
             //determine what JSON data this function is parsing
             if( url.contains("locations?") )
             {
+                String location_name    = jsonDataRow.getString("name");
                 locations+=location_name;
             }
             else
             {
-
+                String estimote_name = jsonDataRow.getString("name");
+                estimotes+=estimote_name;
             }
 
             //tvLocations.append(location_name);
@@ -200,7 +201,13 @@ public class MainActivity extends Activity {
         protected void onPostExecute(String result) {
             Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_LONG).show();
             etResponse.setText(result);
-            tvLocations.append(locations);
+
+            if( locations!=null)
+            {
+                tvLocations.append(locations);
+            }
+
+            tvLocations.append(estimotes);
         }
     }
 }
