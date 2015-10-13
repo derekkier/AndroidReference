@@ -1,4 +1,15 @@
 package com.derekkier.androidreference;
+/*
+to get the sha1 key, in the terminal navigate to
+keytool -list -v -keystore key-name-you-chose.jk
+ */
+
+import android.location.Location;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -6,68 +17,99 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 
-import android.app.Activity;
-import android.location.Location;
-import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Toast;
+/**
+ * Location sample.
+ *
+ * Demonstrates use of the Location API to retrieve the last known location for a device.
+ * This sample uses Google Play services (GoogleApiClient) but does not need to authenticate a user.
+ * See https://github.com/googlesamples/android-google-accounts/tree/master/QuickStart if you are
+ * also using APIs that need authentication.
+ */
+public class MainActivity extends ActionBarActivity implements
+        ConnectionCallbacks, OnConnectionFailedListener {
 
+    protected static final String TAG = "MainActivity";
 
-public class MainActivity extends Activity implements
-    ConnectionCallbacks, OnConnectionFailedListener {
+    /**
+     * Provides the entry point to Google Play services.
+     */
+    protected GoogleApiClient mGoogleApiClient;
 
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    TextView tvLatlong;
+    /**
+     * Represents a geographical location.
+     */
+    protected Location mLastLocation;
+
+    protected TextView mLatitudeText;
+    protected TextView mLongitudeText;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
 
-        tvLatlong = (TextView) findViewById(R.id.tvLatlong);
+        mLatitudeText = (TextView) findViewById((R.id.latitude_text));
+        mLongitudeText = (TextView) findViewById((R.id.longitude_text));
 
         buildGoogleApiClient();
-
-        if(mGoogleApiClient!= null){
-            mGoogleApiClient.connect();
-        }
-        else
-            Toast.makeText(this, "Not connected...", Toast.LENGTH_SHORT).show();
-
-
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult arg0) {
-        Toast.makeText(this, "Failed to connect...", Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onConnected(Bundle arg0) {
-
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-
-        if (mLastLocation != null) {
-            tvLatlong.setText("Latitude: "+ String.valueOf(mLastLocation.getLatitude())+"Longitude: "+
-                    String.valueOf(mLastLocation.getLongitude()));
-        }
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        Toast.makeText(this, "Connection suspended...", Toast.LENGTH_SHORT).show();
-
-    }
-
+    /**
+     * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
+     */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(LocationServices.API)
-            .build();
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    /**
+     * Runs when a GoogleApiClient object successfully connects.
+     */
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        // Provides a simple way of getting a device's location and is well suited for
+        // applications that do not require a fine-grained location and that do not need location
+        // updates. Gets the best and most recent location currently available, which may be null
+        // in rare cases when a location is not available.
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastLocation != null) {
+            mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+        } else {
+            Toast.makeText(this, R.string.no_location_detected, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might be returned in
+        // onConnectionFailed.
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
+    }
+
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        // The connection to Google Play services was lost for some reason. We call connect() to
+        // attempt to re-establish the connection.
+        Log.i(TAG, "Connection suspended");
+        mGoogleApiClient.connect();
     }
 }
